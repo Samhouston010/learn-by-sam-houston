@@ -1277,7 +1277,6 @@
     }
 
     function positionPopup(x,y){
-      // show first so we can measure
       popup.style.visibility='hidden';
       popup.classList.add('show');
       var pw=popup.offsetWidth||240,ph=popup.offsetHeight||150;
@@ -1285,12 +1284,16 @@
       popup.style.visibility='';
       var vw=window.innerWidth,vh=window.innerHeight;
       var lx=x-pw/2;
-      var ty=y-ph-14;
-      if(ty<8)ty=y+22;
+      // on mobile: show BELOW selection (iOS context menu takes space above)
+      var isMobile=window.innerWidth<700||('ontouchstart' in window);
+      var ty=isMobile?(y+54):(y-ph-14);
+      if(!isMobile&&ty<8)ty=y+22;
+      if(ty+ph>window.scrollY+vh-8)ty=y-ph-14;
+      if(ty<window.scrollY+8)ty=window.scrollY+8;
       if(lx+pw>vw-8)lx=vw-pw-8;
       if(lx<8)lx=8;
       popup.style.left=lx+'px';
-      popup.style.top=Math.max(8,ty)+'px';
+      popup.style.top=Math.max(window.scrollY+8,ty)+'px';
     }
 
     function isInsideEnLine(node){
@@ -1324,11 +1327,11 @@
       popupVisible=true;
     }
 
-    // ---- mouseup: desktop selection ----
-    document.addEventListener('mouseup',function(e){
-      // ignore clicks inside popup itself
-      if(popup.contains(e.target))return;
-      setTimeout(function(){
+    // ---- selectionchange: works on iOS Safari, Android, desktop ----
+    var selTimer=null;
+    document.addEventListener('selectionchange',function(){
+      clearTimeout(selTimer);
+      selTimer=setTimeout(function(){
         var sel=window.getSelection();
         if(!sel||sel.isCollapsed||sel.rangeCount===0){
           if(popupVisible)closePopup();
@@ -1344,24 +1347,17 @@
           if(popupVisible)closePopup();
           return;
         }
+        // avoid re-showing if same word already showing
+        if(popupVisible&&currentWord===word)return;
         var range=sel.getRangeAt(0);
         var rect=range.getBoundingClientRect();
-        showForWord(word,sel.anchorNode,rect);
-      },120);
-    });
-
-    // ---- touchend: mobile selection ----
-    document.addEventListener('touchend',function(e){
-      if(popup.contains(e.target))return;
-      setTimeout(function(){
-        var sel=window.getSelection();
-        if(!sel||sel.isCollapsed)return;
-        var word=sel.toString().trim().replace(/[^a-zA-Z\s'\-]/g,'').trim();
-        if(!word||word.length<2||word.length>50)return;
-        if(!isInsideEnLine(sel.anchorNode))return;
-        var t=e.changedTouches[0];
-        showForWord(word,sel.anchorNode,{pageX:t.pageX,pageY:t.pageY});
-      },250);
+        // rect is in viewport coords — convert to page coords
+        showForWord(word,sel.anchorNode,{
+          left:rect.left+window.scrollX,
+          top:rect.top+window.scrollY,
+          width:rect.width
+        });
+      },400);
     });
 
     // ---- close on click outside ----
