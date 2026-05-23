@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -17,11 +16,17 @@
     --bg1:#f4efe2;--bg2:#eef3f0;
   }
   body.dark{
-    --ink:#e6ebe9;--ink-soft:#a8b5b0;--paper:#0f1816;--card:#1a2522;--line:#2c3a36;
+    --ink:#e6ebe9;--ink-soft:#c0ccc8;--paper:#0f1816;--card:#1a2522;--line:#2c3a36;
     --accent:#2bb3a3;--accent-2:#1a9080;--accent-soft:#16302c;--gold:#e0aa1e;--gold-soft:#2a2414;
     --en:#9fc3d6;--en-soft:#16262e;--rust:#e08070;
     --bg1:#13201c;--bg2:#0d1a22;
   }
+  body.dark{background:radial-gradient(circle at 12% 8%,#13201c 0,transparent 45%),radial-gradient(circle at 88% 90%,#0d1a22 0,transparent 45%),#0f1816 !important;}
+  body.dark .pair .fa-line{color:#c8d6d1 !important}
+  body.dark .pair.active .fa-line{color:#e6ebe9 !important}
+  body.dark .vcard .mean,body.dark .pv .mean,body.dark .pv .literal{color:#c8d6d1}
+  body.dark .ex .ex-fa{color:#b0c0bb}
+  body.dark footer{color:#8aa49e}
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{font-family:'Vazirmatn',sans-serif;background:radial-gradient(circle at 12% 8%,var(--bg1) 0,transparent 45%),radial-gradient(circle at 88% 90%,var(--bg2) 0,transparent 45%),var(--paper);color:var(--ink);line-height:1.95;padding:0 0 60px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
@@ -176,15 +181,21 @@
 
   /* MY VOCAB PANEL */
   .myvocab-btn{
-    position:fixed;bottom:18px;right:18px;z-index:200;
-    display:flex;align-items:center;gap:7px;cursor:pointer;border:none;
-    background:linear-gradient(135deg,var(--gold),#d4a01e);color:#fff;
-    padding:9px 16px;border-radius:30px;font-family:'Vazirmatn',sans-serif;font-weight:700;font-size:13px;
-    box-shadow:0 8px 22px -8px rgba(184,134,11,.6),0 1px 0 rgba(255,255,255,.3) inset;
-    transition:transform .15s;
+    position:fixed;bottom:18px;left:94px;z-index:200;
+    width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(184,134,11,.32);backdrop-filter:blur(14px) saturate(170%);-webkit-backdrop-filter:blur(14px) saturate(170%);
+    color:#fff8e1;display:flex;align-items:center;justify-content:center;font-size:14px;
+    box-shadow:0 5px 14px -6px rgba(184,134,11,.5),0 1px 0 rgba(255,255,255,.35) inset,0 0 0 1px rgba(184,134,11,.3);
+    transition:transform .2s,background .15s;opacity:.72;
   }
-  .myvocab-btn:hover{transform:translateY(-2px)}
-  .myvocab-btn .cnt{background:rgba(255,255,255,.3);border-radius:20px;padding:0 7px;font-size:11px;min-width:18px;text-align:center}
+  .myvocab-btn:hover{opacity:1;transform:scale(1.08)}
+  .myvocab-btn .cnt{
+    position:absolute;top:-5px;right:-5px;
+    background:#c4302b;color:#fff;border-radius:10px;
+    padding:0 4px;font-size:9px;min-width:14px;height:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Inter',sans-serif;font-weight:700;line-height:1;
+  }
   .myvocab-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
   .myvocab-overlay.open{display:flex}
   .myvocab-modal{background:var(--card);border-radius:20px;max-width:480px;width:100%;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
@@ -208,17 +219,34 @@
   .page-btn .pdir{font-size:11px;color:var(--ink-soft);font-weight:600}
   .page-btn .ptitle{font-size:14px;font-weight:700;color:var(--ink)}
 
-  /* SHARE */
-  .share-row{max-width:920px;margin:36px auto 0;padding:0 22px;text-align:center}
-  .share-row .share-label{font-size:13px;color:var(--ink-soft);margin-bottom:12px}
-  .share-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-  .sbtn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;border:none;cursor:pointer;color:#fff;font-family:'Vazirmatn',sans-serif;font-weight:600;font-size:13px;padding:10px 18px;border-radius:12px;transition:transform .15s,box-shadow .15s}
-  .sbtn:hover{transform:translateY(-2px)}
-  .sbtn.wa{background:#25d366;box-shadow:0 8px 18px -8px #25d366}
-  .sbtn.tg{background:#0088cc;box-shadow:0 8px 18px -8px #0088cc}
-  .sbtn.ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);box-shadow:0 8px 18px -8px #fd1d1d}
-  .sbtn.cp{background:var(--accent);box-shadow:0 8px 18px -8px var(--accent)}
-  .sbtn svg{width:16px;height:16px}
+  /* SHARE - small glass icon buttons */
+  .share-row{max-width:920px;margin:36px auto 0;padding:0 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .share-row .share-label{font-size:13px;color:var(--ink-soft);font-weight:600}
+  .share-btns{display:flex;gap:10px}
+  .sibtn{
+    width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    color:#fff;text-decoration:none;
+    backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%);
+    box-shadow:0 4px 14px -6px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.3) inset;
+    transition:transform .15s,box-shadow .15s,opacity .15s;
+    position:relative;
+  }
+  .sibtn svg{width:18px;height:18px;pointer-events:none}
+  .sibtn:hover{transform:translateY(-2px) scale(1.08);box-shadow:0 8px 18px -6px rgba(0,0,0,.4)}
+  .sibtn:active{transform:scale(.93)}
+  .sibtn.wa{background:rgba(37,211,102,.85)}
+  .sibtn.tg{background:rgba(0,136,204,.85)}
+  .sibtn.ig{background:linear-gradient(135deg,rgba(131,58,180,.9),rgba(253,29,29,.85),rgba(252,176,69,.8))}
+  .sibtn.cp{background:rgba(15,94,87,.7)}
+  /* tooltip on copy */
+  .sibtn .tip{
+    position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);
+    background:var(--ink);color:var(--paper);font-family:'Vazirmatn',sans-serif;
+    font-size:11px;white-space:nowrap;padding:4px 8px;border-radius:6px;
+    pointer-events:none;opacity:0;transition:opacity .2s;
+  }
+  .sibtn .tip.show{opacity:1}
 
   /* FLOATING SCROLL-TO-TOP */
   .to-top{
@@ -237,6 +265,51 @@
   .to-top svg{width:13px;height:13px}
   @media print{.playbar,.yt-row{display:none !important}body{background:#fff;padding:0}header::after{display:none}.pair,.vcard,.pv{box-shadow:none;break-inside:avoid}}
   @page{margin:12mm}
+
+  /* SECTION TABS */
+  .section-tabs{display:flex;align-items:center;gap:0;margin:54px 0 26px;scroll-margin-top:90px;border-bottom:2px solid var(--line);position:relative}
+  .stab{border:none;cursor:pointer;font-family:'Vazirmatn',sans-serif;font-weight:700;font-size:15px;padding:10px 20px 12px;background:none;color:var(--ink-soft);display:flex;align-items:center;gap:8px;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s}
+  .stab:hover{color:var(--ink)}
+  .stab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .stab-num{background:var(--accent);color:#fff;width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+  .stab.active .stab-num{background:var(--accent)}
+  .stab:not(.active) .stab-num{background:var(--ink-soft)}
+  .stab-cnt{background:var(--gold);color:#fff;border-radius:10px;padding:0 6px;font-size:11px;min-width:18px;text-align:center;display:none}
+  .stab-cnt.has-items{display:inline-block}
+  .stab-line{flex:1;height:2px}
+
+  /* INLINE NOTEBOOK */
+  .notebook-inline{padding:10px 0 20px}
+  .nb-empty{text-align:center;color:var(--ink-soft);padding:40px 10px;font-size:14px}
+  .nb-item{display:flex;align-items:baseline;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .nb-item .w{font-family:'Lora',serif;direction:ltr;font-weight:700;color:var(--en);font-size:16px;min-width:120px}
+  .nb-item .m{font-size:13.5px;color:var(--ink-soft);flex:1}
+  .nb-item .rm{cursor:pointer;color:var(--rust);background:none;border:none;font-size:16px;flex-shrink:0}
+
+  /* DRAGGABLE PLAYER */
+  .playbar.at-bottom{
+    position:fixed;bottom:60px;top:auto !important;left:50%;transform:translateX(-50%);
+    max-width:860px;width:calc(100% - 32px);
+    border-radius:16px;
+    box-shadow:0 -4px 30px -10px rgba(20,40,40,.3),0 10px 28px -16px rgba(20,40,40,.35),0 1px 0 rgba(255,255,255,.55) inset;
+  }
+  .pb-drag-handle{
+    position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+    width:40px;height:6px;border-radius:3px;
+    background:rgba(15,94,87,.25);cursor:grab;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s;
+  }
+  .pb-drag-handle:hover{background:rgba(0,188,212,.5)}
+  .pb-drag-handle:active{cursor:grabbing}
+  .pb-drag-tip{
+    position:absolute;top:-28px;left:50%;transform:translateX(-50%);
+    font-size:10px;color:var(--ink-soft);white-space:nowrap;
+    opacity:0;transition:opacity .2s;pointer-events:none;
+    font-family:'Vazirmatn',sans-serif;
+  }
+  .playbar:hover .pb-drag-tip{opacity:.7}
+
 </style>
 </head>
 <body>
@@ -249,7 +322,7 @@
   <div class="meta-row">
     <span class="chip">📊 سطح: B2–C1</span>
     <span class="chip">📝 23 بخش</span>
-    <a class="chip chip-vocab" href="#vocab-section" id="vocabChip">📚 13 واژه <span class="chip-arrow">↓</span></a>
+    <a class="chip chip-vocab" href="#vocab-section" id="vocabChip">📚 13 واژگان <span class="chip-arrow">↓</span></a>
     <span class="chip" style="background:rgba(184,134,11,.22);border-color:rgba(184,134,11,.5);color:#f3dca0">✍️ گردآوری: Sam Houston — سجاد</span>
   </div>
 </header>
@@ -265,13 +338,9 @@
 <audio id="player" preload="metadata" playsinline webkit-playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" src="audio.mp3"></audio>
 
 <main>
-  <div class="legend">
-    <span>راهنمای رنگ‌ها:</span>
-    <span><span class="vw" style="cursor:default">واژهٔ دشوار</span> ← بخش واژگان</span>
-    <span><span class="pv-mark" style="cursor:default">فعل عبارتی</span> ← بخش فعل‌های عبارتی</span>
-  </div>
-
   <div class="playbar" id="playbar">
+    <div class="pb-drag-handle" id="pbDragHandle" title="بکشید تا پلیر را جابجا کنید"></div>
+    <span class="pb-drag-tip">بکشید ↓ پایین صفحه</span>
     <button class="cbtn cbtn-sec cbtn-restart" id="bRestart" title="از اول این درس">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-4.51"></path></svg>
     </button>
@@ -409,7 +478,16 @@
     <p class="fa-line">کرک، همیشه خوب است با تو گفتگو کنم. امیدوارم از تعطیلات روز یادبود لذت ببری. متشکرم، جان. این آخر هفته به یاد خدمهٔ ناوم در یواس‌اس کول خواهم بود.</p>
   </div>
 
-  <div class="section-head" id="vocab-section"><span class="num">۱</span><h2>واژگان دشوار</h2><span class="line"></span></div>
+  <div class="section-tabs" id="vocab-section">
+    <button class="stab active" id="tabVocab" onclick="switchTab('vocab')">
+      <span class="stab-num">۱</span> واژگان دشوار
+    </button>
+    <button class="stab" id="tabBook" onclick="switchTab('book')">
+      ⭐ دفترچهٔ لغت من <span class="stab-cnt" id="stbCount">0</span>
+    </button>
+    <span class="stab-line"></span>
+  </div>
+  <div id="panelVocab">
   <div class="vocab-grid">
     <div class="vcard">
       <div class="top">
@@ -582,7 +660,7 @@
     </div>
   </div>
 
-  <div class="section-head"><span class="num">۲</span><h2>فعل‌های عبارتی (Phrasal Verbs)</h2><span class="line"></span></div>
+  <div class="section-head" style="margin-top:30px"><span class="num">۲</span><h2>فعل‌های عبارتی (Phrasal Verbs)</h2><span class="line"></span></div>
   
   <div class="pv">
     <div class="top">
@@ -636,27 +714,40 @@
       <div class="ex"><p class="ex-en">We catch them flat-footed.</p><p class="ex-fa">ما آنها را غافلگیر می‌کنیم.</p></div><div class="ex"><p class="ex-en">The attack caught them flat-footed.</p><p class="ex-fa">حمله آنها را غافلگیر کرد.</p></div>
     </div>
   </div>
+  </div><!-- /panelVocab -->
 
-  <!-- SHARE -->
-  <div class="share-row">
-    <div class="share-label">📲 این درس را با دوستان به اشتراک بگذارید:</div>
-    <div class="share-btns">
-      <a class="sbtn wa" id="shWa" target="_blank" rel="noopener">واتساپ</a>
-      <a class="sbtn tg" id="shTg" target="_blank" rel="noopener">تلگرام</a>
-      <button class="sbtn ig" id="shIg">اینستاگرام</button>
-      <button class="sbtn cp" id="shCp">کپی لینک</button>
+  <!-- NOTEBOOK PANEL (inline, shown when tab is active) -->
+  <div id="panelBook" style="display:none">
+    <div class="notebook-inline" id="nbInline">
+      <div class="nb-empty" id="nbEmpty">هنوز واژه‌ای ذخیره نکرده‌اید.<br>روی ستارهٔ ☆ کنار هر واژه بزنید.</div>
     </div>
   </div>
 
-  <!-- PAGINATION -->
-  <div class="pagination"><a class="page-btn prev" href="../lesson6/index.html"><span class="pic">→</span><span><span class="pdir">درس قبلی</span><span class="ptitle">شمارش معکوس نهایی برای ایران</span></span></a><span class="page-btn next disabled"><span class="pic">←</span><span><span class="pdir">درس بعدی</span><span class="ptitle">—</span></span></span></div>
+  <!-- SHARE -->
+  <div class="share-row">
+    <div class="share-label">اشتراک‌گذاری</div>
+    <div class="share-btns">
+      <a class="sibtn wa" id="shWa" target="_blank" rel="noopener" title="واتساپ">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </a>
+      <a class="sibtn tg" id="shTg" target="_blank" rel="noopener" title="تلگرام">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      </a>
+      <button class="sibtn ig" id="shIg" title="اینستاگرام">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+      </button>
+      <button class="sibtn cp" id="shCp" title="کپی لینک">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      </button>
+    </div>
+  </div>
 </main>
 
 <button class="to-top" id="toTop" title="برو به بالای صفحه" aria-label="برو به بالا">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </button>
 <button class="dark-toggle" id="darkToggle" title="حالت تاریک / روشن">🌙</button>
-<button class="myvocab-btn" id="myVocabBtn">⭐ دفترچهٔ من <span class="cnt" id="mvCount">0</span></button>
+<button class="myvocab-btn" id="myVocabBtn" title="دفترچهٔ لغت من">⭐<span class="cnt" id="mvCount"></span></button>
 
 <div class="myvocab-overlay" id="mvOverlay">
   <div class="myvocab-modal">
@@ -904,6 +995,11 @@
         var list=load();var i=list.findIndex(function(x){return x.word===w;});
         if(i>=0)list.splice(i,1); else list.push({word:w,mean:m});
         save(list);updateCount();markStars();
+        // sync tab count and inline panel if open
+        if(typeof updateNbCount==='function') updateNbCount();
+        if(document.getElementById('panelBook')&&document.getElementById('panelBook').style.display!=='none'){
+          if(typeof renderNbInline==='function') renderNbInline();
+        }
       });
     });
     btn.addEventListener('click',function(){render();overlay.classList.add('open');});
@@ -920,12 +1016,17 @@
     var ig=document.getElementById('shIg'),cp=document.getElementById('shCp');
     if(wa)wa.href='https://wa.me/?text='+encodeURIComponent(text+' '+url);
     if(tg)tg.href='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
+    function showTip(btn,msg){
+      var tip=btn.querySelector('.tip');
+      if(!tip){tip=document.createElement('span');tip.className='tip';btn.appendChild(tip);}
+      tip.textContent=msg;tip.classList.add('show');
+      setTimeout(function(){tip.classList.remove('show');},2000);
+    }
     if(ig)ig.addEventListener('click',function(){
-      // Instagram has no direct web-share; copy link so user can paste in story/bio
-      navigator.clipboard.writeText(url).then(function(){ig.textContent='✓ لینک کپی شد (در اینستاگرام جای‌گذاری کنید)';setTimeout(function(){ig.textContent='اینستاگرام';},2500);});
+      navigator.clipboard.writeText(url).then(function(){showTip(ig,'لینک کپی شد');}).catch(function(){showTip(ig,'کپی نشد');});
     });
     if(cp)cp.addEventListener('click',function(){
-      navigator.clipboard.writeText(url).then(function(){cp.textContent='✓ کپی شد';setTimeout(function(){cp.textContent='کپی لینک';},2000);});
+      navigator.clipboard.writeText(url).then(function(){showTip(cp,'کپی شد ✓');}).catch(function(){showTip(cp,'کپی نشد');});
     });
   })();
 
@@ -975,6 +1076,85 @@
         var m=findMark(c.key);
         if(m){scrollToEl(m.el);flash(m.el);}
       });
+    });
+  })();
+
+  // ===== Section Tabs (واژگان / دفترچه) =====
+  window.switchTab = function(tab){
+    var vPanel=document.getElementById('panelVocab');
+    var bPanel=document.getElementById('panelBook');
+    var tVocab=document.getElementById('tabVocab');
+    var tBook=document.getElementById('tabBook');
+    if(tab==='vocab'){
+      vPanel.style.display='';bPanel.style.display='none';
+      tVocab.classList.add('active');tBook.classList.remove('active');
+    } else {
+      vPanel.style.display='none';bPanel.style.display='';
+      tVocab.classList.remove('active');tBook.classList.add('active');
+      renderNbInline();
+    }
+  };
+  function renderNbInline(){
+    var KEY='myVocabList';
+    var nb=document.getElementById('nbInline');
+    var empty=document.getElementById('nbEmpty');
+    if(!nb)return;
+    var list=[];try{list=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
+    // remove old items
+    nb.querySelectorAll('.nb-item').forEach(function(el){el.remove();});
+    if(list.length===0){if(empty)empty.style.display='';return;}
+    if(empty)empty.style.display='none';
+    list.forEach(function(it,idx){
+      var d=document.createElement('div');d.className='nb-item';
+      d.innerHTML='<span class="w">'+it.word+'</span><span class="m">'+it.mean+'</span><button class="rm" title="حذف">🗑️</button>';
+      d.querySelector('.rm').addEventListener('click',function(){
+        var l=[];try{l=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
+        l.splice(idx,1);try{localStorage.setItem(KEY,JSON.stringify(l));}catch(e){}
+        renderNbInline();updateNbCount();markStarsGlobal();
+      });
+      nb.appendChild(d);
+    });
+  }
+  function updateNbCount(){
+    var KEY='myVocabList';
+    var list=[];try{list=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
+    var cnt=document.getElementById('stbCount');
+    if(cnt){cnt.textContent=list.length||'';cnt.classList.toggle('has-items',list.length>0);}
+    // also update floating button badge
+    var mvCnt=document.getElementById('mvCount');
+    if(mvCnt){mvCnt.textContent=list.length>0?list.length:'';}
+  }
+  function markStarsGlobal(){
+    var KEY='myVocabList';
+    var list=[];try{list=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
+    var words=list.map(function(x){return x.word;});
+    document.querySelectorAll('.vstar').forEach(function(s){
+      var saved=words.indexOf(s.getAttribute('data-word'))>=0;
+      s.classList.toggle('saved',saved);s.textContent=saved?'★':'☆';
+    });
+  }
+  updateNbCount();
+
+  // ===== Draggable player (click handle = toggle bottom/top) =====
+  (function(){
+    var playbar=document.getElementById('playbar');
+    var handle=document.getElementById('pbDragHandle');
+    if(!playbar||!handle)return;
+    var KEY='playerPosition';
+    var atBottom=false;
+    try{atBottom=localStorage.getItem(KEY)==='bottom';}catch(e){}
+    function applyPos(bottom){
+      atBottom=bottom;
+      playbar.classList.toggle('at-bottom',bottom);
+      // when at top, restore sticky; when at bottom fixed positioning takes over
+      if(bottom){ playbar.style.position='fixed'; }
+      else { playbar.style.position=''; }
+      try{localStorage.setItem(KEY,bottom?'bottom':'top');}catch(e){}
+    }
+    if(atBottom) applyPos(true);
+    handle.addEventListener('click',function(e){
+      e.stopPropagation();
+      applyPos(!atBottom);
     });
   })();
 
