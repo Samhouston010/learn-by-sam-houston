@@ -97,6 +97,8 @@
 
   /* SLIM GLASS PLAYER */
   .playbar{position:-webkit-sticky;position:sticky;top:8px;z-index:100;max-width:920px;margin:6px auto 16px;overflow:hidden;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.22);backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(255,255,255,.4);border-radius:16px;padding:8px 14px;box-shadow:0 10px 28px -16px rgba(20,40,40,.35),0 1px 0 rgba(255,255,255,.55) inset}
+  body.dark .playbar{background:rgba(30,60,55,.85);border:1px solid rgba(43,179,163,.35);box-shadow:0 10px 28px -16px rgba(0,0,0,.7),0 1px 0 rgba(43,179,163,.25) inset}
+  body.dark .playbar::before{background:linear-gradient(90deg,transparent,rgba(43,179,163,.6),transparent)}
   .playbar::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,188,.4),transparent)}
   .pb-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;position:relative;z-index:2}
   .pb-bar{height:4px;background:rgba(15,94,87,.14);border-radius:3px;cursor:pointer;position:relative;padding:9px 0;margin:-9px 0;background-clip:content-box;touch-action:none}
@@ -131,7 +133,6 @@
   .pair.active .en-line{color:#0a423d;font-weight:600;background:#fff6cf;border-radius:8px;padding:4px 8px;box-shadow:inset 0 -2px 0 #f0d062}
   .pair.active .fa-line{color:var(--ink);font-weight:500}
   .pair.active .idx{background:var(--rust);box-shadow:0 0 0 4px rgba(156,59,46,.18)}
-  .pair.active::before{content:"🔊";position:absolute;top:-12px;left:16px;font-size:15px;background:var(--accent);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -4px var(--accent)}
   .pair .idx{position:absolute;top:-11px;right:18px;background:var(--en);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:3px 11px;border-radius:20px;cursor:pointer;transition:background .15s,box-shadow .15s,transform .1s;user-select:none}
   .pair .idx:hover{transform:scale(1.08)}
   .pair .idx:active{transform:scale(.94)}
@@ -176,12 +177,12 @@
   footer{max-width:920px;margin:60px auto 0;padding:26px;text-align:center;border-top:2px solid var(--line);color:var(--ink-soft);font-size:13.5px}
   footer .brand{font-weight:700;color:var(--accent)}
 
-  /* DARK MODE TOGGLE (floating, next to scroll-top) */
+  /* DARK MODE TOGGLE (floating) */
   .dark-toggle{
-    position:fixed;bottom:18px;left:56px;z-index:200;
-    width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;
+    position:fixed;bottom:18px;left:64px;z-index:200;
+    width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;
     background:rgba(15,94,87,.32);backdrop-filter:blur(14px) saturate(170%);-webkit-backdrop-filter:blur(14px) saturate(170%);
-    color:#fff8e1;display:flex;align-items:center;justify-content:center;font-size:14px;
+    color:#fff8e1;display:flex;align-items:center;justify-content:center;font-size:15px;
     box-shadow:0 5px 14px -6px rgba(10,66,61,.5),0 1px 0 rgba(255,255,255,.3) inset,0 0 0 1px rgba(255,255,255,.14);
     transition:transform .2s,background .15s;opacity:.72;
   }
@@ -200,10 +201,10 @@
 
   /* MY VOCAB PANEL */
   .myvocab-btn{
-    position:fixed;bottom:18px;left:94px;z-index:200;
-    width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;
+    position:fixed;bottom:18px;left:106px;z-index:200;
+    width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;
     background:rgba(184,134,11,.32);backdrop-filter:blur(14px) saturate(170%);-webkit-backdrop-filter:blur(14px) saturate(170%);
-    color:#fff8e1;display:flex;align-items:center;justify-content:center;font-size:14px;
+    color:#fff8e1;display:flex;align-items:center;justify-content:center;font-size:15px;
     box-shadow:0 5px 14px -6px rgba(184,134,11,.5),0 1px 0 rgba(255,255,255,.35) inset,0 0 0 1px rgba(184,134,11,.3);
     transition:transform .2s,background .15s;opacity:.72;
   }
@@ -270,7 +271,7 @@
   /* FLOATING SCROLL-TO-TOP */
   .to-top{
     position:fixed;bottom:18px;left:18px;z-index:200;
-    width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;
+    width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;
     background:rgba(184,134,11,.32);
     backdrop-filter:blur(14px) saturate(170%);-webkit-backdrop-filter:blur(14px) saturate(170%);
     color:rgba(255,248,225,.95);display:flex;align-items:center;justify-content:center;
@@ -282,6 +283,56 @@
   .to-top:hover{opacity:1;background:rgba(184,134,11,.55)}
   .to-top:active{transform:scale(.88)}
   .to-top svg{width:13px;height:13px}
+  /* WORD LOOKUP POPUP */
+  .wl-popup{
+    position:fixed;z-index:500;
+    background:var(--card);border:1px solid var(--line);
+    border-radius:16px;padding:14px 16px;
+    box-shadow:0 12px 40px -12px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.5) inset;
+    min-width:220px;max-width:300px;
+    display:none;flex-direction:column;gap:8px;
+    font-family:'Vazirmatn',sans-serif;
+    transition:opacity .15s;
+  }
+  .wl-popup.show{display:flex}
+  .wl-word{
+    font-family:'Lora',serif;font-weight:700;font-size:17px;
+    color:var(--en);direction:ltr;text-align:left;
+    border-bottom:1px solid var(--line);padding-bottom:8px;
+  }
+  .wl-btn-lookup{
+    width:100%;padding:9px 12px;border:none;cursor:pointer;border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;font-family:'Vazirmatn',sans-serif;font-weight:700;font-size:13px;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    transition:transform .1s,box-shadow .15s;
+    box-shadow:0 4px 12px -6px rgba(15,94,87,.5);
+  }
+  .wl-btn-lookup:hover{transform:translateY(-1px);box-shadow:0 6px 16px -6px rgba(15,94,87,.6)}
+  .wl-btn-lookup:active{transform:scale(.96)}
+  .wl-btn-lookup.loading{opacity:.7;cursor:wait}
+  .wl-ipa{font-family:'Inter',sans-serif;font-size:12px;color:var(--ink-soft);direction:ltr;text-align:left}
+  .wl-mean{font-size:13.5px;color:var(--ink);font-weight:600;line-height:1.6}
+  .wl-exs{font-size:12px;color:var(--ink-soft);line-height:1.7;border-top:1px dashed var(--line);padding-top:6px;direction:ltr;text-align:left}
+  .wl-actions{display:flex;gap:8px;margin-top:4px}
+  .wl-save{
+    flex:1;padding:8px;border:none;cursor:pointer;border-radius:9px;
+    background:rgba(184,134,11,.2);color:var(--gold);
+    font-family:'Vazirmatn',sans-serif;font-weight:700;font-size:12.5px;
+    transition:background .15s;
+  }
+  .wl-save:hover{background:rgba(184,134,11,.35)}
+  .wl-save.done{background:rgba(43,179,163,.2);color:var(--accent)}
+  .wl-cancel{
+    padding:8px 12px;border:none;cursor:pointer;border-radius:9px;
+    background:var(--line);color:var(--ink-soft);font-size:13px;
+    transition:background .15s;
+  }
+  .wl-cancel:hover{background:var(--rust);color:#fff}
+  body.dark .wl-popup{box-shadow:0 12px 40px -12px rgba(0,0,0,.7),0 1px 0 rgba(255,255,255,.1) inset}
+
+  @media(max-width:600px){.wl-popup{min-width:180px;max-width:calc(100vw - 32px)}}
+
   @media print{.playbar,.yt-row{display:none !important}body{background:#fff;padding:0}header::after{display:none}.pair,.vcard,.pv{box-shadow:none;break-inside:avoid}}
   @page{margin:12mm}
 
@@ -778,6 +829,23 @@
   </div>
 </div>
 
+<!-- WORD LOOKUP POPUP (appears on text selection) -->
+<div id="wlPopup" class="wl-popup">
+  <div class="wl-word" id="wlWord"></div>
+  <div class="wl-state" id="wlState">
+    <button class="wl-btn-lookup" id="wlLookup">🔍 جستجو و افزودن به واژگان</button>
+  </div>
+  <div class="wl-result" id="wlResult" style="display:none">
+    <div class="wl-ipa" id="wlIpa"></div>
+    <div class="wl-mean" id="wlMean"></div>
+    <div class="wl-exs" id="wlExs"></div>
+    <div class="wl-actions">
+      <button class="wl-save" id="wlSave">⭐ افزودن به دفترچه</button>
+      <button class="wl-cancel" id="wlCancel">✕</button>
+    </div>
+  </div>
+</div>
+
 <footer>
   <p>📘 <span class="brand">درس انگلیسی</span> — Fox News — مصاحبه با کرک لیپولد</p>
   <p style="margin-top:10px;font-size:15px;color:var(--ink)">آماده و گردآوری شده توسط <b style="color:var(--accent)">Sam Houston — سجاد</b></p>
@@ -1175,6 +1243,205 @@
       e.stopPropagation();
       applyPos(!atBottom);
     });
+  })();
+
+  // ===== WORD LOOKUP (select text → popup → API → save) =====
+  (function(){
+    var popup=document.getElementById('wlPopup');
+    var wlWordEl=document.getElementById('wlWord');
+    var wlState=document.getElementById('wlState');
+    var wlResult=document.getElementById('wlResult');
+    var wlLookup=document.getElementById('wlLookup');
+    var wlIpa=document.getElementById('wlIpa');
+    var wlMean=document.getElementById('wlMean');
+    var wlExs=document.getElementById('wlExs');
+    var wlSave=document.getElementById('wlSave');
+    var wlCancel=document.getElementById('wlCancel');
+    if(!popup)return;
+
+    var currentWord='';
+    var currentData=null;
+
+    function closePopup(){
+      popup.classList.remove('show');
+      currentWord='';currentData=null;
+      wlResult.style.display='none';
+      wlState.style.display='';
+      wlLookup.textContent='🔍 جستجو و افزودن به واژگان';
+      wlLookup.classList.remove('loading');
+      wlSave.textContent='⭐ افزودن به دفترچه';
+      wlSave.classList.remove('done');
+    }
+
+    function positionPopup(x,y){
+      popup.style.left='0';popup.style.top='0';
+      var pw=popup.offsetWidth||240,ph=popup.offsetHeight||120;
+      var vw=window.innerWidth,vh=window.innerHeight;
+      var lx=Math.min(x,vw-pw-12);
+      var ty=y-ph-10;
+      if(ty<8)ty=y+18;
+      popup.style.left=Math.max(8,lx)+'px';
+      popup.style.top=Math.max(8,ty)+'px';
+    }
+
+    // Only trigger on en-line text selection
+    document.addEventListener('mouseup',function(e){
+      // small delay so selection is final
+      setTimeout(function(){
+        var sel=window.getSelection();
+        if(!sel||sel.isCollapsed){return;}
+        var word=sel.toString().trim().replace(/[^a-zA-Z\s'\-]/g,'').trim();
+        if(!word||word.length<2||word.length>40){closePopup();return;}
+        // check selection is inside .en-line
+        var node=sel.anchorNode;
+        var inEn=false;
+        var el=node&&node.nodeType===3?node.parentElement:node;
+        while(el){if(el.classList&&(el.classList.contains('en-line')||el.classList.contains('pair'))){inEn=true;break;}el=el.parentElement;}
+        if(!inEn){closePopup();return;}
+        currentWord=word;
+        wlWordEl.textContent=word;
+        wlResult.style.display='none';
+        wlState.style.display='';
+        wlLookup.textContent='🔍 جستجو و افزودن به واژگان';
+        wlLookup.classList.remove('loading');
+        wlSave.textContent='⭐ افزودن به دفترچه';
+        wlSave.classList.remove('done');
+        popup.classList.add('show');
+        var range=sel.getRangeAt(0);
+        var rect=range.getBoundingClientRect();
+        positionPopup(rect.left+window.scrollX,rect.top+window.scrollY);
+      },100);
+    });
+
+    // touch support
+    document.addEventListener('touchend',function(e){
+      setTimeout(function(){
+        var sel=window.getSelection();
+        if(!sel||sel.isCollapsed)return;
+        var word=sel.toString().trim().replace(/[^a-zA-Z\s'\-]/g,'').trim();
+        if(!word||word.length<2||word.length>40)return;
+        var node=sel.anchorNode;
+        var inEn=false;
+        var el=node&&node.nodeType===3?node.parentElement:node;
+        while(el){if(el.classList&&(el.classList.contains('en-line')||el.classList.contains('pair'))){inEn=true;break;}el=el.parentElement;}
+        if(!inEn)return;
+        currentWord=word;
+        wlWordEl.textContent=word;
+        wlResult.style.display='none';wlState.style.display='';
+        wlLookup.textContent='🔍 جستجو و افزودن به واژگان';
+        wlLookup.classList.remove('loading');
+        popup.classList.add('show');
+        // position near touch
+        var t=e.changedTouches[0];
+        positionPopup(t.pageX,t.pageY);
+      },200);
+    });
+
+    document.addEventListener('mousedown',function(e){
+      if(!popup.contains(e.target)){closePopup();}
+    });
+
+    wlCancel.addEventListener('click',closePopup);
+
+    wlLookup.addEventListener('click',function(){
+      if(!currentWord)return;
+      wlLookup.textContent='در حال جستجو...';
+      wlLookup.classList.add('loading');
+
+      // Step 1: Free Dictionary API for pronunciation + English definition + examples
+      var dictUrl='https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(currentWord.split(' ')[0].toLowerCase());
+      fetch(dictUrl)
+        .then(function(r){return r.json();})
+        .then(function(data){
+          var ipa='',defEn='',examples=[];
+          if(Array.isArray(data)&&data[0]){
+            var entry=data[0];
+            // IPA
+            if(entry.phonetics){
+              for(var i=0;i<entry.phonetics.length;i++){
+                if(entry.phonetics[i].text){ipa=entry.phonetics[i].text;break;}
+              }
+            }
+            // definition + examples
+            if(entry.meanings&&entry.meanings[0]){
+              var m=entry.meanings[0];
+              if(m.definitions&&m.definitions[0]){
+                defEn=m.definitions[0].definition||'';
+                if(m.definitions[0].example)examples.push(m.definitions[0].example);
+              }
+              if(m.definitions&&m.definitions[1]&&m.definitions[1].example)
+                examples.push(m.definitions[1].example);
+            }
+          }
+          // Step 2: MyMemory translate definition to Persian
+          var toTranslate=defEn||currentWord;
+          return fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(toTranslate)+'&langpair=en|fa')
+            .then(function(r2){return r2.json();})
+            .then(function(tr){
+              var meanFa='';
+              if(tr&&tr.responseData&&tr.responseData.translatedText){
+                meanFa=tr.responseData.translatedText;
+              }
+              currentData={word:currentWord,ipa:ipa,defEn:defEn,meanFa:meanFa,examples:examples};
+              // show result
+              wlIpa.textContent=ipa?('/'+ipa+'/'):'';
+              wlMean.innerHTML='<span style="color:var(--ink-soft);font-size:11px;font-weight:400">معنی: </span>'+meanFa;
+              wlExs.innerHTML=examples.slice(0,2).map(function(ex){return '<div>• '+ex+'</div>';}).join('');
+              wlState.style.display='none';
+              wlResult.style.display='flex';
+              wlResult.style.flexDirection='column';
+              wlResult.style.gap='6px';
+              // reposition after content shown
+              setTimeout(function(){
+                var range=window.getSelection()&&!window.getSelection().isCollapsed?window.getSelection().getRangeAt(0):null;
+                if(range){var rect=range.getBoundingClientRect();positionPopup(rect.left+window.scrollX,rect.top+window.scrollY);}
+              },50);
+            });
+        })
+        .catch(function(){
+          // fallback: just translate the word itself
+          fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(currentWord)+'&langpair=en|fa')
+            .then(function(r){return r.json();})
+            .then(function(tr){
+              var meanFa=tr&&tr.responseData?tr.responseData.translatedText:'یافت نشد';
+              currentData={word:currentWord,ipa:'',defEn:'',meanFa:meanFa,examples:[]};
+              wlIpa.textContent='';
+              wlMean.innerHTML='<span style="color:var(--ink-soft);font-size:11px;font-weight:400">معنی: </span>'+meanFa;
+              wlExs.innerHTML='';
+              wlState.style.display='none';
+              wlResult.style.display='flex';
+              wlResult.style.flexDirection='column';
+              wlResult.style.gap='6px';
+            })
+            .catch(function(){
+              wlLookup.textContent='⚠️ خطا — دوباره امتحان کنید';
+              wlLookup.classList.remove('loading');
+            });
+        });
+    });
+
+    wlSave.addEventListener('click',function(){
+      if(!currentData||wlSave.classList.contains('done'))return;
+      var KEY='myVocabList';
+      var list=[];try{list=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
+      var already=list.some(function(x){return x.word.toLowerCase()===currentData.word.toLowerCase();});
+      if(!already){
+        list.push({
+          word:currentData.word,
+          mean:currentData.meanFa,
+          ipa:currentData.ipa,
+          examples:currentData.examples,
+          custom:true
+        });
+        try{localStorage.setItem(KEY,JSON.stringify(list));}catch(e){}
+      }
+      wlSave.textContent='✓ اضافه شد';
+      wlSave.classList.add('done');
+      if(typeof updateNbCount==='function')updateNbCount();
+      if(typeof markStarsGlobal==='function')markStarsGlobal();
+      setTimeout(closePopup,900);
+    });
+
   })();
 
 })();
