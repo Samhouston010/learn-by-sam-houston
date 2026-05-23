@@ -1261,185 +1261,209 @@
 
     var currentWord='';
     var currentData=null;
+    var popupVisible=false;
 
     function closePopup(){
       popup.classList.remove('show');
+      popupVisible=false;
       currentWord='';currentData=null;
       wlResult.style.display='none';
-      wlState.style.display='';
+      wlState.style.display='flex';
       wlLookup.textContent='🔍 جستجو و افزودن به واژگان';
-      wlLookup.classList.remove('loading');
+      wlLookup.disabled=false;
+      wlLookup.style.opacity='';
       wlSave.textContent='⭐ افزودن به دفترچه';
       wlSave.classList.remove('done');
     }
 
     function positionPopup(x,y){
-      popup.style.left='0';popup.style.top='0';
-      var pw=popup.offsetWidth||240,ph=popup.offsetHeight||120;
+      // show first so we can measure
+      popup.style.visibility='hidden';
+      popup.classList.add('show');
+      var pw=popup.offsetWidth||240,ph=popup.offsetHeight||150;
+      popup.classList.remove('show');
+      popup.style.visibility='';
       var vw=window.innerWidth,vh=window.innerHeight;
-      var lx=Math.min(x,vw-pw-12);
-      var ty=y-ph-10;
-      if(ty<8)ty=y+18;
-      popup.style.left=Math.max(8,lx)+'px';
+      var lx=x-pw/2;
+      var ty=y-ph-14;
+      if(ty<8)ty=y+22;
+      if(lx+pw>vw-8)lx=vw-pw-8;
+      if(lx<8)lx=8;
+      popup.style.left=lx+'px';
       popup.style.top=Math.max(8,ty)+'px';
     }
 
-    // Only trigger on en-line text selection
+    function isInsideEnLine(node){
+      var el=node&&node.nodeType===3?node.parentElement:node;
+      while(el&&el!==document.body){
+        if(el.classList&&el.classList.contains('en-line'))return true;
+        el=el.parentElement;
+      }
+      return false;
+    }
+
+    function showForWord(word,anchorNode,rectOrTouch){
+      currentWord=word;
+      wlWordEl.textContent=word;
+      wlResult.style.display='none';
+      wlState.style.display='flex';
+      wlLookup.textContent='🔍 جستجو و افزودن به واژگان';
+      wlLookup.disabled=false;
+      wlLookup.style.opacity='';
+      wlSave.textContent='⭐ افزودن به دفترچه';
+      wlSave.classList.remove('done');
+      var x,y;
+      if(rectOrTouch&&rectOrTouch.left!==undefined){
+        x=rectOrTouch.left+rectOrTouch.width/2+window.scrollX;
+        y=rectOrTouch.top+window.scrollY;
+      } else {
+        x=rectOrTouch.pageX;y=rectOrTouch.pageY;
+      }
+      positionPopup(x,y);
+      popup.classList.add('show');
+      popupVisible=true;
+    }
+
+    // ---- mouseup: desktop selection ----
     document.addEventListener('mouseup',function(e){
-      // small delay so selection is final
+      // ignore clicks inside popup itself
+      if(popup.contains(e.target))return;
       setTimeout(function(){
         var sel=window.getSelection();
-        if(!sel||sel.isCollapsed){return;}
-        var word=sel.toString().trim().replace(/[^a-zA-Z\s'\-]/g,'').trim();
-        if(!word||word.length<2||word.length>40){closePopup();return;}
-        // check selection is inside .en-line
-        var node=sel.anchorNode;
-        var inEn=false;
-        var el=node&&node.nodeType===3?node.parentElement:node;
-        while(el){if(el.classList&&(el.classList.contains('en-line')||el.classList.contains('pair'))){inEn=true;break;}el=el.parentElement;}
-        if(!inEn){closePopup();return;}
-        currentWord=word;
-        wlWordEl.textContent=word;
-        wlResult.style.display='none';
-        wlState.style.display='';
-        wlLookup.textContent='🔍 جستجو و افزودن به واژگان';
-        wlLookup.classList.remove('loading');
-        wlSave.textContent='⭐ افزودن به دفترچه';
-        wlSave.classList.remove('done');
-        popup.classList.add('show');
+        if(!sel||sel.isCollapsed||sel.rangeCount===0){
+          if(popupVisible)closePopup();
+          return;
+        }
+        var raw=sel.toString().trim();
+        var word=raw.replace(/[^a-zA-Z\s'\-]/g,'').trim();
+        if(!word||word.length<2||word.length>50){
+          if(popupVisible)closePopup();
+          return;
+        }
+        if(!isInsideEnLine(sel.anchorNode)){
+          if(popupVisible)closePopup();
+          return;
+        }
         var range=sel.getRangeAt(0);
         var rect=range.getBoundingClientRect();
-        positionPopup(rect.left+window.scrollX,rect.top+window.scrollY);
-      },100);
+        showForWord(word,sel.anchorNode,rect);
+      },120);
     });
 
-    // touch support
+    // ---- touchend: mobile selection ----
     document.addEventListener('touchend',function(e){
+      if(popup.contains(e.target))return;
       setTimeout(function(){
         var sel=window.getSelection();
         if(!sel||sel.isCollapsed)return;
         var word=sel.toString().trim().replace(/[^a-zA-Z\s'\-]/g,'').trim();
-        if(!word||word.length<2||word.length>40)return;
-        var node=sel.anchorNode;
-        var inEn=false;
-        var el=node&&node.nodeType===3?node.parentElement:node;
-        while(el){if(el.classList&&(el.classList.contains('en-line')||el.classList.contains('pair'))){inEn=true;break;}el=el.parentElement;}
-        if(!inEn)return;
-        currentWord=word;
-        wlWordEl.textContent=word;
-        wlResult.style.display='none';wlState.style.display='';
-        wlLookup.textContent='🔍 جستجو و افزودن به واژگان';
-        wlLookup.classList.remove('loading');
-        popup.classList.add('show');
-        // position near touch
+        if(!word||word.length<2||word.length>50)return;
+        if(!isInsideEnLine(sel.anchorNode))return;
         var t=e.changedTouches[0];
-        positionPopup(t.pageX,t.pageY);
-      },200);
+        showForWord(word,sel.anchorNode,{pageX:t.pageX,pageY:t.pageY});
+      },250);
     });
 
-    document.addEventListener('mousedown',function(e){
-      if(!popup.contains(e.target)){closePopup();}
+    // ---- close on click outside ----
+    document.addEventListener('click',function(e){
+      if(popupVisible&&!popup.contains(e.target)){
+        // small delay so button clicks inside popup fire first
+        setTimeout(closePopup,50);
+      }
     });
 
-    wlCancel.addEventListener('click',closePopup);
+    wlCancel.addEventListener('click',function(e){e.stopPropagation();closePopup();});
 
-    wlLookup.addEventListener('click',function(){
-      if(!currentWord)return;
+    // ---- lookup button ----
+    wlLookup.addEventListener('click',function(e){
+      e.stopPropagation();
+      if(!currentWord||wlLookup.disabled)return;
       wlLookup.textContent='در حال جستجو...';
-      wlLookup.classList.add('loading');
+      wlLookup.disabled=true;
+      wlLookup.style.opacity='0.7';
 
-      // Step 1: Free Dictionary API for pronunciation + English definition + examples
-      var dictUrl='https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(currentWord.split(' ')[0].toLowerCase());
+      var firstWord=currentWord.split(/\s+/)[0].toLowerCase().replace(/[^a-z'\-]/g,'');
+      var dictUrl='https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(firstWord);
+
       fetch(dictUrl)
-        .then(function(r){return r.json();})
+        .then(function(r){return r.ok?r.json():Promise.reject('not found');})
         .then(function(data){
           var ipa='',defEn='',examples=[];
           if(Array.isArray(data)&&data[0]){
             var entry=data[0];
-            // IPA
             if(entry.phonetics){
               for(var i=0;i<entry.phonetics.length;i++){
                 if(entry.phonetics[i].text){ipa=entry.phonetics[i].text;break;}
               }
             }
-            // definition + examples
             if(entry.meanings&&entry.meanings[0]){
               var m=entry.meanings[0];
               if(m.definitions&&m.definitions[0]){
                 defEn=m.definitions[0].definition||'';
                 if(m.definitions[0].example)examples.push(m.definitions[0].example);
               }
-              if(m.definitions&&m.definitions[1]&&m.definitions[1].example)
-                examples.push(m.definitions[1].example);
+              for(var j=1;j<Math.min(m.definitions.length,3);j++){
+                if(m.definitions[j].example)examples.push(m.definitions[j].example);
+                if(examples.length>=2)break;
+              }
             }
           }
-          // Step 2: MyMemory translate definition to Persian
           var toTranslate=defEn||currentWord;
           return fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(toTranslate)+'&langpair=en|fa')
             .then(function(r2){return r2.json();})
             .then(function(tr){
-              var meanFa='';
-              if(tr&&tr.responseData&&tr.responseData.translatedText){
+              var meanFa='ترجمه یافت نشد';
+              if(tr&&tr.responseData&&tr.responseData.translatedText)
                 meanFa=tr.responseData.translatedText;
-              }
-              currentData={word:currentWord,ipa:ipa,defEn:defEn,meanFa:meanFa,examples:examples};
-              // show result
-              wlIpa.textContent=ipa?('/'+ipa+'/'):'';
-              wlMean.innerHTML='<span style="color:var(--ink-soft);font-size:11px;font-weight:400">معنی: </span>'+meanFa;
-              wlExs.innerHTML=examples.slice(0,2).map(function(ex){return '<div>• '+ex+'</div>';}).join('');
-              wlState.style.display='none';
-              wlResult.style.display='flex';
-              wlResult.style.flexDirection='column';
-              wlResult.style.gap='6px';
-              // reposition after content shown
-              setTimeout(function(){
-                var range=window.getSelection()&&!window.getSelection().isCollapsed?window.getSelection().getRangeAt(0):null;
-                if(range){var rect=range.getBoundingClientRect();positionPopup(rect.left+window.scrollX,rect.top+window.scrollY);}
-              },50);
+              showResult(ipa,meanFa,examples);
             });
         })
         .catch(function(){
-          // fallback: just translate the word itself
+          // dict failed — just translate the word
           fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(currentWord)+'&langpair=en|fa')
             .then(function(r){return r.json();})
             .then(function(tr){
               var meanFa=tr&&tr.responseData?tr.responseData.translatedText:'یافت نشد';
-              currentData={word:currentWord,ipa:'',defEn:'',meanFa:meanFa,examples:[]};
-              wlIpa.textContent='';
-              wlMean.innerHTML='<span style="color:var(--ink-soft);font-size:11px;font-weight:400">معنی: </span>'+meanFa;
-              wlExs.innerHTML='';
-              wlState.style.display='none';
-              wlResult.style.display='flex';
-              wlResult.style.flexDirection='column';
-              wlResult.style.gap='6px';
+              showResult('',meanFa,[]);
             })
             .catch(function(){
-              wlLookup.textContent='⚠️ خطا — دوباره امتحان کنید';
-              wlLookup.classList.remove('loading');
+              wlLookup.textContent='⚠️ خطای اتصال — دوباره امتحان کنید';
+              wlLookup.disabled=false;wlLookup.style.opacity='';
             });
         });
     });
 
-    wlSave.addEventListener('click',function(){
+    function showResult(ipa,meanFa,examples){
+      currentData={word:currentWord,ipa:ipa,mean:meanFa,examples:examples};
+      wlIpa.textContent=ipa?('/'+ipa+'/  '):' ';
+      wlMean.innerHTML='<b style="color:var(--ink-soft);font-weight:400;font-size:11px">معنی: </b>'+meanFa;
+      if(examples.length>0){
+        wlExs.innerHTML=examples.slice(0,2).map(function(ex){return '<div style="margin-top:3px">• '+ex+'</div>';}).join('');
+        wlExs.style.display='';
+      } else {
+        wlExs.style.display='none';
+      }
+      wlState.style.display='none';
+      wlResult.style.display='flex';
+      wlResult.style.flexDirection='column';
+      wlResult.style.gap='5px';
+    }
+
+    wlSave.addEventListener('click',function(e){
+      e.stopPropagation();
       if(!currentData||wlSave.classList.contains('done'))return;
       var KEY='myVocabList';
-      var list=[];try{list=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
+      var list=[];try{list=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(er){}
       var already=list.some(function(x){return x.word.toLowerCase()===currentData.word.toLowerCase();});
       if(!already){
-        list.push({
-          word:currentData.word,
-          mean:currentData.meanFa,
-          ipa:currentData.ipa,
-          examples:currentData.examples,
-          custom:true
-        });
-        try{localStorage.setItem(KEY,JSON.stringify(list));}catch(e){}
+        list.push({word:currentData.word,mean:currentData.mean,ipa:currentData.ipa,examples:currentData.examples,custom:true});
+        try{localStorage.setItem(KEY,JSON.stringify(list));}catch(er){}
       }
       wlSave.textContent='✓ اضافه شد';
       wlSave.classList.add('done');
       if(typeof updateNbCount==='function')updateNbCount();
       if(typeof markStarsGlobal==='function')markStarsGlobal();
-      setTimeout(closePopup,900);
+      setTimeout(closePopup,800);
     });
 
   })();
