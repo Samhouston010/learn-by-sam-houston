@@ -103,14 +103,19 @@
   .pair .idx{position:absolute;top:-11px;right:18px;background:var(--en);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:3px 11px;border-radius:20px;cursor:pointer;transition:background .15s,box-shadow .15s,transform .1s;user-select:none}
   .pair .idx:hover{transform:scale(1.08)}
   .pair .idx:active{transform:scale(.94)}
-  .pair .idx.st-replay{background:#00acc1;box-shadow:0 0 0 4px rgba(0,188,212,.22)}
-  .pair .idx.st-paused{background:#b8860b;box-shadow:0 0 0 4px rgba(184,134,11,.25)}
+  .pair .idx.st-paused{background:#00bcd4;color:#fff;box-shadow:0 0 0 3px #c4302b,0 0 10px rgba(0,188,212,.5)}
   .pair .en-line{font-family:'Lora',serif;direction:ltr;text-align:left;font-size:16px;color:var(--en);line-height:1.85;font-weight:500;border-bottom:1px dashed var(--line);padding-bottom:12px;margin-bottom:12px}
   .pair .fa-line{font-size:15.5px;color:var(--ink-soft);font-weight:400}
-  .vw{color:var(--gold);font-weight:600;border-bottom:2px dotted var(--gold);cursor:help}
-  .pv-mark{color:var(--accent);font-weight:600;border-bottom:2px dotted var(--accent);cursor:help}
+  .vw{color:var(--gold);font-weight:600;border-bottom:2px dotted var(--gold);cursor:pointer;transition:background .2s,box-shadow .2s}
+  .pv-mark{color:var(--accent);font-weight:600;border-bottom:2px dotted var(--accent);cursor:pointer;transition:background .2s,box-shadow .2s}
   .vw-fa{border-bottom:2px dotted var(--gold);font-weight:600}
   .pv-fa{border-bottom:2px dotted var(--accent);font-weight:600}
+  .vw.flash{background:#fff3c4;box-shadow:0 0 0 3px #ffe08a;border-radius:4px}
+  .pv-mark.flash{background:#d4f3ee;box-shadow:0 0 0 3px #9be0d4;border-radius:4px}
+  .vcard.flash,.pv.flash{box-shadow:0 0 0 3px var(--gold),0 8px 24px -10px rgba(184,134,11,.5)}
+  .pv.flash{box-shadow:0 0 0 3px var(--accent),0 8px 24px -10px rgba(15,94,87,.5)}
+  .vcard .word,.pv .pvword{cursor:pointer}
+  .scroll-tag{scroll-margin-top:90px}
 
   .vocab-grid{display:grid;gap:16px}
   .vcard{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 14px -10px rgba(0,0,0,.15)}
@@ -446,8 +451,8 @@
   function setActive(i){
     if(i===active)return;
     if(active>=0&&pairs[active])pairs[active].classList.remove('active');
-    // when playback naturally moves to a new sentence, clear any teal/red badge states
-    if(typeof window.__resetBadgesOnMove==='function') window.__resetBadgesOnMove();
+    // when playback naturally moves to a new sentence, clear any paused-badge marker
+    if(typeof window.__clearPausedBadge==='function') window.__clearPausedBadge();
     active=i;
     if(active>=0&&pairs[active]){pairs[active].classList.add('active');var r=pairs[active].getBoundingClientRect();if(r.top<90||r.bottom>window.innerHeight)pairs[active].scrollIntoView({behavior:'smooth',block:'center'});}
   }
@@ -488,62 +493,40 @@
   bSpeed.addEventListener('click',function(){rate=SPEEDS[(SPEEDS.indexOf(rate)+1)%SPEEDS.length];player.playbackRate=rate;bSpeed.textContent=(rate===1?'1×':(rate===0.75?'¾×':'½×'));bSpeed.classList.toggle('slow',rate!==1);});
   pairs.forEach(function(p){p.addEventListener('click',function(e){if(e.target.closest('a'))return;if(e.target.classList.contains('idx'))return;playFrom(parseInt(p.getAttribute('data-i'),10));});});
 
-  // ===== Number badge: 3-state control =====
-  // state 0 (normal) -> click: replay this section from start (teal)
-  // state 1 (replay/teal) -> click: pause audio in place (red)
-  // state 2 (paused/red) -> click: resume, back to normal color
-  var badgeState = {}; // index -> 0/1/2
-  function resetBadge(i){
-    var p = pairs[i]; if(!p) return;
-    var b = p.querySelector('.idx');
-    if(b){ b.classList.remove('st-replay','st-paused'); }
-    badgeState[i] = 0;
-  }
-  function resetAllBadgesExcept(keep){
-    pairs.forEach(function(p,idx){ if(idx!==keep) resetBadge(idx); });
+  // ===== Number badge: simple pause / resume toggle =====
+  // click once  -> pause audio in place, badge turns teal with red ring
+  // click again -> resume from where it stopped, badge returns to normal
+  var pausedBadge = null; // index of the currently-paused badge, or null
+  function clearPausedBadge(){
+    if(pausedBadge!==null && pairs[pausedBadge]){
+      var b=pairs[pausedBadge].querySelector('.idx');
+      if(b) b.classList.remove('st-paused');
+    }
+    pausedBadge=null;
   }
   pairs.forEach(function(p){
     var badge = p.querySelector('.idx');
     if(!badge) return;
     var i = parseInt(p.getAttribute('data-i'),10);
-    badgeState[i] = 0;
     badge.addEventListener('click', function(e){
       e.stopPropagation();
-      var st = badgeState[i] || 0;
-      if(st === 0){
-        // first click: replay this section from its start
-        resetAllBadgesExcept(i);
+      if(pausedBadge === i){
+        // resume
         badge.classList.remove('st-paused');
-        badge.classList.add('st-replay');
-        badgeState[i] = 1;
-        playFrom(i);
-      } else if(st === 1){
-        // second click: pause in place
-        badge.classList.remove('st-replay');
-        badge.classList.add('st-paused');
-        badgeState[i] = 2;
-        player.pause();
-      } else {
-        // third click: resume and return to normal
-        badge.classList.remove('st-replay','st-paused');
-        badgeState[i] = 0;
+        pausedBadge = null;
         player.playbackRate = rate;
-        var pr = player.play(); if(pr&&pr.catch) pr.catch(function(){});
+        var pr=player.play(); if(pr&&pr.catch) pr.catch(function(){});
+      } else {
+        // pause here
+        clearPausedBadge();
+        badge.classList.add('st-paused');
+        pausedBadge = i;
+        player.pause();
       }
     });
   });
-
-  // When playback naturally moves to a new sentence, clear teal "replay" badges
-  // (but keep a red "paused" badge, since pause stops playback anyway).
-  window.__resetBadgesOnMove = function(){
-    pairs.forEach(function(p,idx){
-      if((badgeState[idx]||0) === 1){ // only clear teal/replay ones
-        var b = p.querySelector('.idx');
-        if(b) b.classList.remove('st-replay');
-        badgeState[idx] = 0;
-      }
-    });
-  };
+  // if user presses main play/pause or seeks, clear the paused-badge marker
+  window.__clearPausedBadge = clearPausedBadge;
 
   player.addEventListener('timeupdate',function(){
     var d=player.duration||DURATION;
@@ -617,6 +600,55 @@
       }
     });
   }
+  // ===== Two-way vocabulary linking =====
+  // Click an in-text word (.vw / .pv-mark) -> jump to its card in the vocab/phrasal section.
+  // Click a card's word -> jump back to the FIRST matching word in the transcript.
+  (function(){
+    function norm(s){return (s||'').toLowerCase().replace(/[^a-z' ]/g,'').replace(/\s+/g,' ').trim();}
+    function flash(el){ if(!el)return; el.classList.add('flash'); setTimeout(function(){el.classList.remove('flash');},1600); }
+    function scrollToEl(el){ if(!el)return; var y=el.getBoundingClientRect().top+window.pageYOffset-90; window.scrollTo({top:y,behavior:'smooth'}); }
+
+    // collect cards (vocab + phrasal). Card title element: .vcard .word / .pv .pvword
+    var cards=[];
+    document.querySelectorAll('.vcard').forEach(function(c){var w=c.querySelector('.word');if(w)cards.push({key:norm(w.textContent),card:c,title:w});});
+    document.querySelectorAll('.pv').forEach(function(c){var w=c.querySelector('.pvword');if(w)cards.push({key:norm(w.textContent),card:c,title:w});});
+
+    // collect in-text marks
+    var marks=[];
+    document.querySelectorAll('.pair .vw, .pair .pv-mark').forEach(function(m){marks.push({key:norm(m.textContent),el:m});});
+
+    function findCard(key){
+      // exact, then contains either direction (for phrasals like "dig in its heels" vs "dig in one's heels")
+      var c=cards.find(function(x){return x.key===key;});
+      if(c)return c;
+      c=cards.find(function(x){return x.key.indexOf(key)>=0||key.indexOf(x.key)>=0;});
+      return c;
+    }
+    function findMark(key){
+      var m=marks.find(function(x){return x.key===key;});
+      if(m)return m;
+      m=marks.find(function(x){return x.key.indexOf(key)>=0||key.indexOf(x.key)>=0;});
+      return m;
+    }
+
+    // in-text -> card
+    marks.forEach(function(m){
+      m.el.addEventListener('click',function(e){
+        e.stopPropagation();
+        var c=findCard(m.key);
+        if(c){scrollToEl(c.card);flash(c.card);}
+      });
+    });
+    // card -> first in-text occurrence
+    cards.forEach(function(c){
+      c.title.addEventListener('click',function(e){
+        e.stopPropagation();
+        var m=findMark(c.key);
+        if(m){scrollToEl(m.el);flash(m.el);}
+      });
+    });
+  })();
+
 })();
 </script>
 </body>
