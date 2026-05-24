@@ -438,11 +438,9 @@
 
 
   /* WORD-LEVEL HIGHLIGHT (lesson 8) */
-  .wspan{cursor:default;transition:opacity .1s,font-weight .1s}
-  .wspan.whl{opacity:.35}
-  .wspan.wcur{opacity:1;font-weight:700;font-size:1.05em}
-  body.dark .wspan.whl{opacity:.3}
-  body.dark .wspan.wcur{opacity:1;font-weight:700}
+  .wspan{cursor:default;transition:font-weight .08s}
+  .wspan.wcur{font-weight:800;font-size:1.06em;color:#0a4a35}
+  body.dark .wspan.wcur{font-weight:800;color:#7de8d8}
 
 </style>
 </head>
@@ -1126,25 +1124,24 @@ var DURATION8=610;
 
   function setWordHL(wi){
     if(wi===curWi8)return;
-    if(curWi8>=0&&wspans[curWi8]){wspans[curWi8].classList.remove('wcur','whl');}
+    if(curWi8>=0&&wspans[curWi8]){wspans[curWi8].classList.remove('wcur');}
     var si=wi>=0?WS8[wi]:-1;
     if(si!==curSi8){
       if(curSi8>=0){
         var op=document.querySelector('.pair[data-si="'+curSi8+'"]');
-        if(op){op.classList.remove('active');op.querySelectorAll('.wspan').forEach(function(w){w.classList.remove('whl','wcur');});}
+        if(op){op.classList.remove('active');}
       }
       if(si>=0){
         var np=document.querySelector('.pair[data-si="'+si+'"]');
         if(np){
           np.classList.add('active');
-          np.querySelectorAll('.wspan').forEach(function(w){w.classList.add('whl');});
           var r=np.getBoundingClientRect();
           if(r.top<90||r.bottom>window.innerHeight) np.scrollIntoView({behavior:'smooth',block:'center'});
         }
       }
       curSi8=si;
     }
-    if(wi>=0&&wspans[wi]){wspans[wi].classList.remove('whl');wspans[wi].classList.add('wcur');}
+    if(wi>=0&&wspans[wi]){wspans[wi].classList.add('wcur');}
     curWi8=wi;
   }
 
