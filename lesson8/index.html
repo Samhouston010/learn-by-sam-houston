@@ -1112,6 +1112,10 @@ var DURATION8=610;
   var TIMES=SS8; // compat alias
   var LESSON_START=SS8[0];
 
+  // Force page to start at top
+  if(window.history.scrollRestoration) window.history.scrollRestoration='manual';
+  window.scrollTo(0,0);
+
   // ===== WORD-LEVEL HIGHLIGHT ENGINE =====
   var wspans=document.querySelectorAll('.wspan');
   var curWi8=-1, curSi8=-1;
@@ -1135,8 +1139,10 @@ var DURATION8=610;
         var np=document.querySelector('.pair[data-si="'+si+'"]');
         if(np){
           np.classList.add('active');
-          var r=np.getBoundingClientRect();
-          if(r.top<90||r.bottom>window.innerHeight) np.scrollIntoView({behavior:'smooth',block:'center'});
+          if(!player.paused){
+            var r=np.getBoundingClientRect();
+            if(r.top<90||r.bottom>window.innerHeight) np.scrollIntoView({behavior:'smooth',block:'center'});
+          }
         }
       }
       curSi8=si;
@@ -1163,10 +1169,16 @@ var DURATION8=610;
   function setActive(i){
     if(i===active)return;
     if(active>=0&&pairs[active])pairs[active].classList.remove('active');
-    // when playback naturally moves to a new sentence, clear any paused-badge marker
     if(typeof window.__clearPausedBadge==='function') window.__clearPausedBadge();
     active=i;
-    if(active>=0&&pairs[active]){pairs[active].classList.add('active');var r=pairs[active].getBoundingClientRect();if(r.top<90||r.bottom>window.innerHeight)pairs[active].scrollIntoView({behavior:'smooth',block:'center'});}
+    if(active>=0&&pairs[active]){
+      pairs[active].classList.add('active');
+      // Only scroll if audio is actually playing
+      if(!player.paused){
+        var r=pairs[active].getBoundingClientRect();
+        if(r.top<90||r.bottom>window.innerHeight)pairs[active].scrollIntoView({behavior:'smooth',block:'center'});
+      }
+    }
   }
   function setPlayingUI(on){pIcon.textContent=on?'⏸':'▶';bPlay.classList.toggle('playing',on);}
   function seekAndPlay(t){
@@ -1217,7 +1229,17 @@ var DURATION8=610;
   try{var ap=localStorage.getItem('autoplayPref');if(ap==='0')setAutoUI(false);}catch(e){}
   if(bAuto){bAuto.addEventListener('click',function(){setAutoUI(!autoplayOn);});}
 
-  pairs.forEach(function(p){p.addEventListener('click',function(e){if(e.target.closest('a'))return;if(e.target.classList.contains('idx'))return;var si=parseInt(p.getAttribute('data-si'),10)||0;var t=SS8[si]||0;if(!autoplayOn){player.currentTime=t;setWordHL(findWordAt8(t));return;}player.currentTime=t;player.play();});});
+  pairs.forEach(function(p){
+    p.addEventListener('click',function(e){
+      // ignore clicks on links, vocab words, phrasal verbs, stars, badges
+      if(e.target.closest('a,.vw,.pv-mark,.vstar,.idx'))return;
+      var si=parseInt(p.getAttribute('data-si'),10)||0;
+      var t=SS8[si]||0;
+      if(!autoplayOn){player.currentTime=t;setWordHL(findWordAt8(t));return;}
+      player.currentTime=t;
+      player.play();
+    });
+  });
 
   // ===== Number badge: simple pause / resume toggle =====
   // click once  -> pause audio in place, badge turns teal with red ring
