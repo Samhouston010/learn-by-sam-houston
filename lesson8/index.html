@@ -69,14 +69,14 @@ body.dark .playbar{background:rgba(30,60,55,.85);border:1px solid rgba(43,179,16
 
 /* WORD HIGHLIGHT SYSTEM */
 main{max-width:920px;margin:0 auto;padding:0 16px}
-.pair8{position:relative;background:var(--card);border:1px solid var(--line);border-right:4px solid transparent;border-radius:12px;padding:16px 16px 14px 14px;margin-bottom:10px;transition:border-color .15s,background .15s,opacity .3s;cursor:pointer}
+.pair8{position:relative;background:var(--card);border:1px solid var(--line);border-right:4px solid transparent;border-radius:12px;padding:14px 14px 14px 44px;margin-bottom:10px;transition:border-color .15s,background .15s,opacity .3s;cursor:pointer}
 body.is-playing .pair8{opacity:.45}
 body.is-playing .pair8.active8{opacity:1}
 .pair8.active8{border-color:var(--accent);border-right:6px solid var(--accent);background:linear-gradient(90deg,#fff,var(--accent-soft));box-shadow:0 12px 30px -14px rgba(15,94,87,.6)}
-.idx8{position:absolute;top:10px;left:10px;width:24px;height:24px;border-radius:8px;background:var(--line);color:var(--ink-soft);font-family:'Inter',sans-serif;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.idx8{position:absolute;top:14px;right:12px;width:26px;height:26px;border-radius:8px;background:var(--line);color:var(--ink-soft);font-family:'Inter',sans-serif;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pair8.active8 .idx8{background:var(--rust);color:#fff}
-.en8{font-family:'Lora',serif;font-size:16px;line-height:1.85;direction:ltr;text-align:left;color:var(--en);padding-right:30px;user-select:text}
-.fa8{font-size:13.5px;line-height:1.85;color:var(--ink-soft);padding-right:30px;margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+.en8{font-family:'Lora',serif;font-size:16px;line-height:1.9;direction:ltr;text-align:left;color:var(--en);user-select:text}
+.fa8{font-size:13.5px;line-height:1.85;color:var(--ink-soft);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
 /* word spans */
 .w{cursor:default;border-radius:3px;padding:0 1px;transition:background .05s}
 .w.whl{background:var(--w-hl);color:#2a1a00;border-radius:4px}
@@ -206,7 +206,7 @@ footer .brand{color:var(--accent);font-weight:700}
   </a>
 </div>
 
-<audio id="player" preload="metadata" playsinline webkit-playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" src="audio.mp3"></audio>
+<audio id="player" preload="auto" playsinline webkit-playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" src="./audio.mp3"></audio>
 
 <main>
   <div class="playbar" id="playbar">
@@ -860,11 +860,21 @@ function setWordActive(wi){
   curWi=wi;
 }
 
+// playbar controls - declare ALL first
+var bPlay=document.getElementById('bPlay'),pIcon=document.getElementById('pIcon');
+var bBack=document.getElementById('bBack'),bFwd=document.getElementById('bFwd');
+var bRestart=document.getElementById('bRestart'),bSpeed=document.getElementById('bSpeed');
+var bAuto=document.getElementById('bAuto');
+var pbBar=document.getElementById('pbBar'),pbFill=document.getElementById('pbFill');
+var pbCur=document.getElementById('pbCur'),pbDur=document.getElementById('pbDur');
+
+player.addEventListener('loadedmetadata',function(){pbDur.textContent=fmt(player.duration||DURATION8);});
+pbDur.textContent=fmt(DURATION8);
+
 player.addEventListener('timeupdate',function(){
   var t=player.currentTime;
   var wi=findWordAt(t);
   setWordActive(wi);
-  // progress bar
   var d=player.duration||DURATION8;
   pbFill.style.width=((t/d)*100)+'%';
   pbCur.textContent=fmt(t);
@@ -873,27 +883,6 @@ player.addEventListener('timeupdate',function(){
 player.addEventListener('play',function(){pIcon.textContent='⏸';document.body.classList.add('is-playing');});
 player.addEventListener('pause',function(){pIcon.textContent='▶';if(curSi<0)document.body.classList.remove('is-playing');});
 player.addEventListener('ended',function(){pIcon.textContent='▶';document.body.classList.remove('is-playing');setWordActive(-1);});
-player.addEventListener('loadedmetadata',function(){pbDur.textContent=fmt(player.duration||DURATION8);});
-pbDur.textContent=fmt(DURATION8);
-
-// click on pair → jump to sentence start
-pairs.forEach(function(p){
-  p.addEventListener('click',function(e){
-    if(e.target.classList.contains('vstar'))return;
-    var si=parseInt(p.getAttribute('data-si'),10);
-    if(!autoplayOn){setWordActive(WT.indexOf(SS[si])>=0?WT.indexOf(SS[si]):-1);return;}
-    player.currentTime=SS[si];
-    player.play();
-  });
-});
-
-// playbar controls
-var bPlay=document.getElementById('bPlay'),pIcon=document.getElementById('pIcon');
-var bBack=document.getElementById('bBack'),bFwd=document.getElementById('bFwd');
-var bRestart=document.getElementById('bRestart'),bSpeed=document.getElementById('bSpeed');
-var bAuto=document.getElementById('bAuto');
-var pbBar=document.getElementById('pbBar'),pbFill=document.getElementById('pbFill');
-var pbCur=document.getElementById('pbCur'),pbDur=document.getElementById('pbDur');
 
 bPlay.addEventListener('click',function(){player.paused?player.play():player.pause();});
 bBack.addEventListener('click',function(){player.currentTime=Math.max(0,player.currentTime-5);});
@@ -901,6 +890,17 @@ bFwd.addEventListener('click',function(){player.currentTime=Math.min(DURATION8,p
 bRestart.addEventListener('click',function(){player.currentTime=0;player.play();});
 bSpeed.addEventListener('click',function(){rate=SPEEDS[(SPEEDS.indexOf(rate)+1)%SPEEDS.length];player.playbackRate=rate;bSpeed.textContent=rate===1?'1×':rate===0.75?'¾×':'½×';});
 
+// click on pair → jump to sentence start
+pairs.forEach(function(p){
+  p.addEventListener('click',function(e){
+    if(e.target.classList.contains('vstar'))return;
+    var si=parseInt(p.getAttribute('data-si'),10);
+    var t=SS[si];
+    if(!autoplayOn){player.currentTime=t;setWordActive(findWordAt(t));return;}
+    player.currentTime=t;
+    player.play();
+  });
+});
 // autoplay toggle
 function setAutoUI(on){autoplayOn=on;bAuto.textContent=on?'▶ON':'▶OFF';bAuto.classList.toggle('off',!on);try{localStorage.setItem('autoplayPref',on?'1':'0');}catch(e){}}
 try{if(localStorage.getItem('autoplayPref')==='0')setAutoUI(false);}catch(e){}
