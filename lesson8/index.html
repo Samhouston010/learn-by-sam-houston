@@ -438,17 +438,11 @@
 
 
   /* WORD-LEVEL HIGHLIGHT (lesson 8) */
-  .wspan{cursor:default;transition:color .08s}
-  .wspan.whl{color:var(--en);opacity:.7}
-  .wspan.wcur{
-    color:#0a5c3a;font-weight:700;
-    text-decoration:underline;
-    text-decoration-color:#00bcd4;
-    text-decoration-thickness:2px;
-    text-underline-offset:3px;
-  }
-  body.dark .wspan.whl{color:#9fc3d6;opacity:.8}
-  body.dark .wspan.wcur{color:#7de8d8;font-weight:700;text-decoration-color:#2bb3a3}
+  .wspan{cursor:default;transition:opacity .1s,font-weight .1s}
+  .wspan.whl{opacity:.35}
+  .wspan.wcur{opacity:1;font-weight:700;font-size:1.05em}
+  body.dark .wspan.whl{opacity:.3}
+  body.dark .wspan.wcur{opacity:1;font-weight:700}
 
 </style>
 </head>
