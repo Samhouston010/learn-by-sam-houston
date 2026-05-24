@@ -1449,7 +1449,8 @@ var DURATION8=489;
         var cardId=m.el.getAttribute('data-card');
         var c=null;
         if(cardId){
-          var el=document.getElementById('vc-'+cardId);
+          // ابتدا vocab card، سپس phrasal verb card
+          var el=document.getElementById('vc-'+cardId)||document.getElementById('pvc-'+cardId);
           if(el)c={card:el};
         }
         if(!c)c=findCard(m.key);
@@ -1461,11 +1462,26 @@ var DURATION8=489;
       });
     });
     // card -> first in-text occurrence
+    // Build reverse map: cardId -> first mark element
+    var cardToMark={};
+    document.querySelectorAll('.pair .vw, .pair .pv-mark').forEach(function(el){
+      var cid=el.getAttribute('data-card');
+      if(cid && !cardToMark[cid]) cardToMark[cid]=el;
+    });
+
     cards.forEach(function(c){
       c.title.addEventListener('click',function(e){
         e.stopPropagation();
-        var m=findMark(c.key);
-        if(m){scrollToEl(m.el);flash(m.el);}
+        // Try by card id first (most reliable)
+        var cardId=c.card.id.replace(/^(vc-|pvc-)/,'');
+        var el=cardToMark[cardId];
+        // Fallback: text match
+        if(!el){ var m=findMark(c.key); if(m) el=m.el; }
+        if(el){
+          // switch back to sentences tab
+          // جملات در بخش اصلی صفحه هستند، فقط اسکرول کافی است
+          setTimeout(function(){scrollToEl(el);flash(el);},50);
+        }
       });
     });
   })();
