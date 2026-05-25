@@ -2054,7 +2054,54 @@ var DURATION8=768;
 
   })();
 
+  // ===== Jump to vocabulary card from word click =====
+  (function(){
+    document.querySelectorAll('.vcard').forEach(function(card){
+      var cardName = card.getAttribute('data-card');
+      if(!cardName) return;
+      
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function(){
+        // Find first wspan with this data-card
+        var target = document.querySelector('[data-card="' + cardName + '"]');
+        if(target){
+          var pair = target.closest('.pair');
+          if(pair){
+            pair.scrollIntoView({behavior:'smooth',block:'center'});
+            pair.style.backgroundColor = 'rgba(184,134,11,0.15)';
+            setTimeout(function(){
+              pair.style.backgroundColor = '';
+            }, 2000);
+          }
+        }
+      });
+    });
+    
+    // Jump to vocabulary from word click
+    document.querySelectorAll('.wspan[data-card]').forEach(function(span){
+      span.style.cursor = 'pointer';
+      span.addEventListener('click', function(e){
+        e.stopPropagation();
+        var cardName = span.getAttribute('data-card');
+        if(!cardName) return;
+        
+        // Find vocabulary card
+        var vocabCard = document.querySelector('[data-card="' + cardName + '"].vcard');
+        if(vocabCard){
+          var overlay = document.getElementById('mvOverlay');
+          if(overlay){
+            overlay.classList.add('open');
+            vocabCard.scrollIntoView({behavior:'smooth',block:'nearest'});
+            vocabCard.style.backgroundColor = 'rgba(184,134,11,0.15)';
+            setTimeout(function(){
+              vocabCard.style.backgroundColor = '';
+            }, 2000);
+          }
+        }
+      });
+    });
+  })();
+
 })();
-</script>
 </body>
 </html>
